@@ -10,6 +10,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.safari.SafariOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.ITestContext;
@@ -29,7 +30,7 @@ public abstract class AbstractTest {
     protected WebDriver driver;
 
     @BeforeSuite
-    public void setupConfig(){
+    public void setupConfig() {
         Config.initialize();
     }
 
@@ -41,8 +42,10 @@ public abstract class AbstractTest {
 
     private WebDriver getRemoteDriver() throws MalformedURLException {
         Capabilities capabilities = new ChromeOptions();
-        if(Constants.FIREFOX.equalsIgnoreCase(Config.get(Constants.BROWSER))){
+        if (Constants.FIREFOX.equalsIgnoreCase(Config.get(Constants.BROWSER))) {
             capabilities = new FirefoxOptions();
+        } else if (Constants.SAFARI.equalsIgnoreCase(Config.get(Constants.BROWSER))) {
+            capabilities = new SafariOptions();
         }
         String urlFormat = Config.get(Constants.GRID_URL_FORMAT);
         String hubHost = Config.get(Constants.GRID_HUB_HOST);
@@ -51,13 +54,13 @@ public abstract class AbstractTest {
         return new RemoteWebDriver(new URL(url), capabilities);
     }
 
-    private WebDriver getLocalDriver(){
+    private WebDriver getLocalDriver() {
         WebDriverManager.chromedriver().setup();
         return new ChromeDriver();
     }
 
     @AfterTest
-    public void quitDriver(){
+    public void quitDriver() {
         this.driver.quit();
     }
 
